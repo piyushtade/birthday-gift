@@ -249,7 +249,9 @@ class MemoryGallery {
 
             card.innerHTML = `
                 <div class="memory-image-wrapper">
-                    <img src="assets/images/${img}" alt="${caption}" loading="lazy">
+                    <img src="assets/images/${img}" alt="${caption}" 
+                         loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+                    <div class="image-shimmer"></div>
                 </div>
                 <div class="memory-content">
                     <span class="memory-date">✨ ${date}</span>
@@ -287,10 +289,11 @@ class VideoGallery {
 
             card.innerHTML = `
                 <div class="video-wrapper">
-                    <video controls preload="metadata">
+                    <video controls preload="metadata" onplay="this.classList.add('loaded')">
                         <source src="assets/videos/${vid}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
+                    <div class="video-shimmer"></div>
                 </div>
                 <div class="memory-content">
                     <span class="memory-date">📹 Video Memory ${i + 1}</span>

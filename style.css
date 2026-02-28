@@ -756,12 +756,37 @@ body.ready #mouse-spotlight {
     width: 100%;
     aspect-ratio: 9 / 16;
     background: #000;
+    position: relative;
+    overflow: hidden;
 }
 
 .video-wrapper video {
     width: 100%;
     height: 100%;
     display: block;
+    opacity: 0.5;
+    transition: opacity 1s ease;
+}
+
+.video-wrapper video.loaded {
+    opacity: 1;
+}
+
+.video-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.05) 25%,
+            rgba(192, 108, 243, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: shimmerEffect 2s infinite linear;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.video-wrapper video.loaded+.video-shimmer {
+    display: none;
 }
 
 @media (max-width: 600px) {
@@ -845,15 +870,47 @@ body.ready #mouse-spotlight {
     line-height: 1.6;
 }
 
-/* Memory images when user adds real photos */
 .memory-image-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: var(--transition-smooth);
+    opacity: 0;
+    transition: opacity 1s ease-in-out, transform 0.6s ease;
 }
 
-.memory-card:hover .memory-image-wrapper img {
+.memory-image-wrapper img.loaded {
+    opacity: 1;
+}
+
+.memory-image-wrapper img.loaded+.image-shimmer {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.image-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.05) 25%,
+            rgba(255, 107, 157, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: shimmerEffect 2s infinite linear;
+    transition: opacity 0.5s ease;
+    z-index: 1;
+}
+
+@keyframes shimmerEffect {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.memory-card:hover .memory-image-wrapper img.loaded {
     transform: scale(1.1);
 }
 
