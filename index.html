@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,21 @@
     <meta name="description" content="A special birthday surprise for the most amazing person in my life.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+    <!-- Scroll Progress -->
+    <div id="scroll-progress-container">
+        <div id="scroll-progress-bar"></div>
+    </div>
+
+    <!-- Mouse Spotlight Overlay -->
+    <div id="mouse-spotlight"></div>
+
     <!-- Particle Canvas -->
     <canvas id="particles-canvas"></canvas>
 
@@ -32,9 +44,9 @@
             </div>
             <p class="hero-subtitle reveal-text">To the most beautiful soul I know</p>
             <h1 class="hero-title">
-                <span class="title-line reveal-text" data-delay="200">Happy</span>
-                <span class="title-line reveal-text" data-delay="400">Birthday</span>
-                <span class="title-line title-name reveal-text" data-delay="600">My Love</span>
+                <span class="title-line reveal-text" data-delay="200" id="hero-happy">Happy</span>
+                <span class="title-line reveal-text" data-delay="400" id="hero-birthday">Birthday</span>
+                <span class="title-line title-name reveal-text" data-delay="600" id="hero-love">My Love</span>
             </h1>
             <div class="hero-date reveal-text" data-delay="800">
                 <span class="date-icon">🎂</span>
@@ -93,69 +105,30 @@
                 <span class="heading-icon">📸</span>
                 Our Beautiful Memories
             </h2>
-            <p class="section-sub reveal-text" data-delay="200">Every moment with you is a treasure I hold close to my heart</p>
+            <p class="section-sub reveal-text" data-delay="200">Every moment with you is a treasure I hold close to my
+                heart</p>
 
-            <div class="memories-timeline">
-                <!-- Memory 1 -->
-                <div class="memory-card reveal-card" data-delay="100">
-                    <div class="memory-image-wrapper">
-                        <div class="memory-placeholder" data-emoji="💑">
-                            <span>Our First Date</span>
-                        </div>
-                    </div>
-                    <div class="memory-content">
-                        <span class="memory-date">❤️ The Beginning</span>
-                        <h3>When It All Started</h3>
-                        <p>The day I met you, I knew my life was about to change forever. Your smile lit up the entire room.</p>
-                    </div>
-                </div>
-
-                <!-- Memory 2 -->
-                <div class="memory-card reveal-card" data-delay="200">
-                    <div class="memory-image-wrapper">
-                        <div class="memory-placeholder" data-emoji="🌅">
-                            <span>Adventures Together</span>
-                        </div>
-                    </div>
-                    <div class="memory-content">
-                        <span class="memory-date">🌟 Adventures</span>
-                        <h3>Exploring The World Together</h3>
-                        <p>Every adventure is better with you by my side. From silly trips to spontaneous plans — you make everything magical.</p>
-                    </div>
-                </div>
-
-                <!-- Memory 3 -->
-                <div class="memory-card reveal-card" data-delay="300">
-                    <div class="memory-image-wrapper">
-                        <div class="memory-placeholder" data-emoji="😂">
-                            <span>Laughing Together</span>
-                        </div>
-                    </div>
-                    <div class="memory-content">
-                        <span class="memory-date">💫 Fun Times</span>
-                        <h3>Our Silly Moments</h3>
-                        <p>Your laugh is my favorite sound in the whole world. Every silly moment we share becomes my happiest memory.</p>
-                    </div>
-                </div>
-
-                <!-- Memory 4 -->
-                <div class="memory-card reveal-card" data-delay="400">
-                    <div class="memory-image-wrapper">
-                        <div class="memory-placeholder" data-emoji="🥰">
-                            <span>Together Forever</span>
-                        </div>
-                    </div>
-                    <div class="memory-content">
-                        <span class="memory-date">♾️ Forever</span>
-                        <h3>Building Our Story</h3>
-                        <p>Every day with you adds another beautiful page to our love story. I can't wait to write a million more.</p>
-                    </div>
-                </div>
+            <div id="memories-grid" class="memories-grid">
+                <!-- Dynamically populated from script.js -->
             </div>
         </div>
     </section>
 
-    <!-- ===== SECTION 4: LOVE LETTER ===== -->
+    <!-- ===== SECTION 4: VIDEOS ===== -->
+    <section id="videos-section" class="section videos-section">
+        <div class="section-inner">
+            <h2 class="section-heading reveal-text">
+                <span class="heading-icon">🎞️</span>
+                Moments In Motion
+            </h2>
+            <p class="section-sub reveal-text" data-delay="200">Our journey together, captured in beautiful motion.</p>
+            <div id="videos-grid" class="videos-grid">
+                <!-- Dynamically populated from script.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 5: LOVE LETTER ===== -->
     <section id="letter-section" class="section letter-section">
         <div class="section-inner">
             <h2 class="section-heading reveal-text">
@@ -167,10 +140,18 @@
                     <div class="letter-seal">💕</div>
                     <p class="letter-greeting">My Dearest Love,</p>
                     <div class="letter-body" id="typewriter-text">
-                        <p>On this beautiful day, I want you to know just how much you mean to me. You are the sunshine that brightens my darkest days, the melody that makes my heart sing, and the reason I believe in magic.</p>
-                        <p>Every moment spent with you feels like a beautiful dream I never want to wake up from. Your smile has the power to turn my worst days into the best ones, and your love gives me the strength to be a better person every single day.</p>
-                        <p>Thank you for being you — for your kindness, your warmth, your incredible spirit, and for choosing to share your life with me. You are the most amazing person I've ever known, and I fall more in love with you with each passing day.</p>
-                        <p>Happy Birthday, my love. May this year bring you all the happiness, success, and love that you truly deserve. I promise to be by your side through every moment, making memories that we'll cherish forever.</p>
+                        <p>On this beautiful day, I want you to know just how much you mean to me. You are the sunshine
+                            that brightens my darkest days, the melody that makes my heart sing, and the reason I
+                            believe in magic.</p>
+                        <p>Every moment spent with you feels like a beautiful dream I never want to wake up from. Your
+                            smile has the power to turn my worst days into the best ones, and your love gives me the
+                            strength to be a better person every single day.</p>
+                        <p>Thank you for being you — for your kindness, your warmth, your incredible spirit, and for
+                            choosing to share your life with me. You are the most amazing person I've ever known, and I
+                            fall more in love with you with each passing day.</p>
+                        <p>Happy Birthday, my love. May this year bring you all the happiness, success, and love that
+                            you truly deserve. I promise to be by your side through every moment, making memories that
+                            we'll cherish forever.</p>
                     </div>
                     <p class="letter-closing">With all my love, forever and always ❤️</p>
                     <p class="letter-signature">— Your Person</p>
@@ -179,7 +160,7 @@
         </div>
     </section>
 
-    <!-- ===== SECTION 5: REASONS I LOVE YOU ===== -->
+    <!-- ===== SECTION 6: REASONS I LOVE YOU ===== -->
     <section id="reasons-section" class="section reasons-section">
         <div class="section-inner">
             <h2 class="section-heading reveal-text">
@@ -231,7 +212,7 @@
         </div>
     </section>
 
-    <!-- ===== SECTION 6: BIRTHDAY WISH / CAKE ===== -->
+    <!-- ===== SECTION 7: BIRTHDAY WISH / CAKE ===== -->
     <section id="wish-section" class="section wish-section">
         <div class="section-inner">
             <h2 class="section-heading reveal-text">
@@ -241,9 +222,15 @@
             <div class="cake-container reveal-text" data-delay="200">
                 <div class="cake" id="birthday-cake">
                     <div class="cake-candles">
-                        <div class="candle"><div class="flame" id="flame-1"></div></div>
-                        <div class="candle"><div class="flame" id="flame-2"></div></div>
-                        <div class="candle"><div class="flame" id="flame-3"></div></div>
+                        <div class="candle">
+                            <div class="flame" id="flame-1"></div>
+                        </div>
+                        <div class="candle">
+                            <div class="flame" id="flame-2"></div>
+                        </div>
+                        <div class="candle">
+                            <div class="flame" id="flame-3"></div>
+                        </div>
                     </div>
                     <div class="cake-top"></div>
                     <div class="cake-middle"></div>
@@ -271,4 +258,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
