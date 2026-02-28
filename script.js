@@ -47,120 +47,112 @@ class SoundFX {
 }
 const sfx = new SoundFX();
 
-// ===== 1. PARTICLE SYSTEM =====
-class ParticleSystem {
-    constructor(canvasId) {
-        this.canvas = document.getElementById(canvasId);
-        this.ctx = this.canvas.getContext('2d');
-        this.particles = [];
+// ===== 1. THREE.JS 3D BACKGROUND ENGINE =====
+class BackgroundScene3D {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) return;
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.container.appendChild(this.renderer.domElement);
+
+        this.objects = [];
         this.mouse = { x: 0, y: 0 };
-        this.resize();
+        this.scrollPos = 0;
+
         this.init();
         this.bindEvents();
         this.animate();
     }
 
-    resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-    }
-
     init() {
-        const count = Math.min(Math.floor(window.innerWidth / 12), 120);
-        this.particles = [];
+        const count = 60;
+        const geometries = [
+            new THREE.IcosahedronGeometry(1.5, 0),
+            new THREE.OctahedronGeometry(1, 0),
+            new THREE.TorusGeometry(1, 0.3, 16, 100),
+            new THREE.TetrahedronGeometry(1.2, 0)
+        ];
+
         for (let i = 0; i < count; i++) {
-            this.particles.push({
-                x: Math.random() * this.canvas.width,
-                y: Math.random() * this.canvas.height,
-                radius: Math.random() * 2 + 0.5,
-                vx: (Math.random() - 0.5) * 0.3,
-                vy: (Math.random() - 0.5) * 0.3,
-                alpha: Math.random() * 0.5 + 0.1,
-                color: this.getColor(),
-                pulse: Math.random() * Math.PI * 2,
-                pulseSpeed: Math.random() * 0.02 + 0.01,
+            const geo = geometries[Math.floor(Math.random() * geometries.length)];
+            const color = [0xff6b9d, 0xc06cf3, 0xffd700][Math.floor(Math.random() * 3)];
+            const mat = new THREE.MeshPhongMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.15,
+                shininess: 100,
+                flatShading: true
+            });
+
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(
+                (Math.random() - 0.5) * 60,
+                (Math.random() - 0.5) * 100,
+                (Math.random() - 0.5) * 30
+            );
+            mesh.rotation.set(Math.random() * 20, Math.random() * 20, Math.random() * 20);
+            const scale = Math.random() * 0.5 + 0.5;
+            mesh.scale.set(scale, scale, scale);
+
+            this.scene.add(mesh);
+            this.objects.push({
+                mesh: mesh,
+                rotX: (Math.random() - 0.5) * 0.01,
+                rotY: (Math.random() - 0.5) * 0.01,
+                rotZ: (Math.random() - 0.5) * 0.01,
+                initialY: mesh.position.y
             });
         }
-    }
 
-    getColor() {
-        const colors = [
-            'rgba(255, 107, 157,',  // pink
-            'rgba(192, 108, 243,',  // purple
-            'rgba(255, 215, 0,',    // gold
-            'rgba(255, 143, 184,',  // soft pink
-            'rgba(102, 126, 234,',  // blue
-        ];
-        return colors[Math.floor(Math.random() * colors.length)];
+        const light1 = new THREE.PointLight(0xff6b9d, 1.5, 100);
+        light1.position.set(10, 10, 10);
+        this.scene.add(light1);
+
+        const light2 = new THREE.PointLight(0xc06cf3, 1.5, 100);
+        light2.position.set(-10, -10, 10);
+        this.scene.add(light2);
+
+        this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+        this.camera.position.z = 30;
     }
 
     bindEvents() {
         window.addEventListener('resize', () => {
-            this.resize();
-            this.init();
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
         });
-        window.addEventListener('mousemove', (e) => {
-            this.mouse.x = e.clientX;
-            this.mouse.y = e.clientY;
-        });
-    }
 
-    drawConnections() {
-        for (let i = 0; i < this.particles.length; i++) {
-            for (let j = i + 1; j < this.particles.length; j++) {
-                const dx = this.particles[i].x - this.particles[j].x;
-                const dy = this.particles[i].y - this.particles[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 120) {
-                    const alpha = (1 - dist / 120) * 0.15;
-                    this.ctx.beginPath();
-                    this.ctx.strokeStyle = `rgba(255, 107, 157, ${alpha})`;
-                    this.ctx.lineWidth = 0.5;
-                    this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
-                    this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
-                    this.ctx.stroke();
-                }
-            }
-        }
+        window.addEventListener('mousemove', (e) => {
+            this.mouse.x = (e.clientX / window.innerWidth) - 0.5;
+            this.mouse.y = (e.clientY / window.innerHeight) - 0.5;
+        });
+
+        window.addEventListener('scroll', () => {
+            this.scrollPos = window.scrollY;
+        });
     }
 
     animate() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        requestAnimationFrame(() => this.animate());
 
-        this.particles.forEach((p) => {
-            const dx = this.mouse.x - p.x;
-            const dy = this.mouse.y - p.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 150) {
-                const force = (150 - dist) / 150;
-                p.vx -= (dx / dist) * force * 0.02;
-                p.vy -= (dy / dist) * force * 0.02;
-            }
+        this.objects.forEach(obj => {
+            obj.mesh.rotation.x += obj.rotX;
+            obj.mesh.rotation.y += obj.rotY;
+            obj.mesh.position.y = obj.initialY + (this.scrollPos * 0.02);
 
-            p.x += p.vx;
-            p.y += p.vy;
-            p.pulse += p.pulseSpeed;
-
-            if (p.x < 0) p.x = this.canvas.width;
-            if (p.x > this.canvas.width) p.x = 0;
-            if (p.y < 0) p.y = this.canvas.height;
-            if (p.y > this.canvas.height) p.y = 0;
-
-            const pulsingAlpha = p.alpha + Math.sin(p.pulse) * 0.15;
-            const pulsingRadius = p.radius + Math.sin(p.pulse) * 0.3;
-            this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, pulsingRadius, 0, Math.PI * 2);
-            this.ctx.fillStyle = `${p.color}${Math.max(0.05, pulsingAlpha)})`;
-            this.ctx.fill();
-
-            this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, pulsingRadius * 3, 0, Math.PI * 2);
-            this.ctx.fillStyle = `${p.color}${Math.max(0.01, pulsingAlpha * 0.1)})`;
-            this.ctx.fill();
+            // Subtle mouse react
+            obj.mesh.position.x += (this.mouse.x * 2 - obj.mesh.position.x) * 0.005;
         });
 
-        this.drawConnections();
-        requestAnimationFrame(() => this.animate());
+        this.camera.rotation.y += (this.mouse.x * 0.1 - this.camera.rotation.y) * 0.02;
+        this.camera.rotation.x += (-this.mouse.y * 0.1 - this.camera.rotation.x) * 0.02;
+
+        this.renderer.render(this.scene, this.camera);
     }
 }
 
@@ -531,7 +523,7 @@ class CursorTrail {
 
 // ===== INITIALIZE =====
 document.addEventListener('DOMContentLoaded', () => {
-    new ParticleSystem('particles-canvas');
+    new BackgroundScene3D('three-container');
     new FloatingHearts('floating-hearts');
     new MemoryGallery('memories-grid');
     new VideoGallery('videos-grid');

@@ -12,9 +12,13 @@
         href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js" type="module"></script>
 </head>
 
 <body>
+    <!-- 3D Scene Container -->
+    <div id="three-container"></div>
+
     <!-- Welcome Overlay (To satisfy browser autoplay policy) -->
     <div id="welcome-overlay">
         <div class="welcome-content">
@@ -32,9 +36,6 @@
 
     <!-- Mouse Spotlight Overlay -->
     <div id="mouse-spotlight"></div>
-
-    <!-- Particle Canvas -->
-    <canvas id="particles-canvas"></canvas>
 
     <!-- Floating Hearts Container -->
     <div id="floating-hearts"></div>
