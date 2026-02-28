@@ -48,6 +48,7 @@ class SoundFX {
 const sfx = new SoundFX();
 
 // ===== 1. THREE.JS 3D BACKGROUND ENGINE =====
+// ===== 1. THREE.JS 3D BACKGROUND ENGINE =====
 class BackgroundScene3D {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
@@ -61,7 +62,16 @@ class BackgroundScene3D {
 
         this.objects = [];
         this.mouse = { x: 0, y: 0 };
+        this.targetMouse = { x: 0, y: 0 };
         this.scrollPos = 0;
+        this.targetScroll = 0;
+
+        this.themes = [
+            { light: new THREE.Color(0xff6b9d), amb: new THREE.Color(0x402030) }, // Hero (Pink)
+            { light: new THREE.Color(0xc06cf3), amb: new THREE.Color(0x302040) }, // Memories (Purple)
+            { light: new THREE.Color(0xffd700), amb: new THREE.Color(0x403520) }  // Wish (Gold)
+        ];
+        this.currentThemeIdx = 0;
 
         this.init();
         this.bindEvents();
@@ -69,55 +79,51 @@ class BackgroundScene3D {
     }
 
     init() {
-        const count = 60;
+        const count = 70;
         const geometries = [
             new THREE.IcosahedronGeometry(1.5, 0),
-            new THREE.OctahedronGeometry(1, 0),
+            new THREE.OctahedronGeometry(1.2, 0),
             new THREE.TorusGeometry(1, 0.3, 16, 100),
-            new THREE.TetrahedronGeometry(1.2, 0)
+            new THREE.TetrahedronGeometry(1.4, 0)
         ];
 
         for (let i = 0; i < count; i++) {
             const geo = geometries[Math.floor(Math.random() * geometries.length)];
-            const color = [0xff6b9d, 0xc06cf3, 0xffd700][Math.floor(Math.random() * 3)];
             const mat = new THREE.MeshPhongMaterial({
-                color: color,
+                color: 0xffffff,
                 transparent: true,
                 opacity: 0.15,
                 shininess: 100,
-                flatShading: true
+                flatShading: true,
+                side: THREE.DoubleSide
             });
 
             const mesh = new THREE.Mesh(geo, mat);
             mesh.position.set(
-                (Math.random() - 0.5) * 60,
-                (Math.random() - 0.5) * 100,
-                (Math.random() - 0.5) * 30
+                (Math.random() - 0.5) * 80,
+                (Math.random() - 0.5) * 160,
+                (Math.random() - 0.5) * 40
             );
-            mesh.rotation.set(Math.random() * 20, Math.random() * 20, Math.random() * 20);
-            const scale = Math.random() * 0.5 + 0.5;
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+            const scale = Math.random() * 0.8 + 0.4;
             mesh.scale.set(scale, scale, scale);
 
             this.scene.add(mesh);
             this.objects.push({
                 mesh: mesh,
-                rotX: (Math.random() - 0.5) * 0.01,
-                rotY: (Math.random() - 0.5) * 0.01,
-                rotZ: (Math.random() - 0.5) * 0.01,
-                initialY: mesh.position.y
+                rot: new THREE.Vector3(Math.random() * 0.01, Math.random() * 0.01, Math.random() * 0.01),
+                initialPos: mesh.position.clone()
             });
         }
 
-        const light1 = new THREE.PointLight(0xff6b9d, 1.5, 100);
-        light1.position.set(10, 10, 10);
-        this.scene.add(light1);
+        this.mainLight = new THREE.PointLight(0xff6b9d, 2.5, 120);
+        this.mainLight.position.set(20, 20, 20);
+        this.scene.add(this.mainLight);
 
-        const light2 = new THREE.PointLight(0xc06cf3, 1.5, 100);
-        light2.position.set(-10, -10, 10);
-        this.scene.add(light2);
+        this.ambLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.scene.add(this.ambLight);
 
-        this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-        this.camera.position.z = 30;
+        this.camera.position.z = 40;
     }
 
     bindEvents() {
@@ -128,29 +134,49 @@ class BackgroundScene3D {
         });
 
         window.addEventListener('mousemove', (e) => {
-            this.mouse.x = (e.clientX / window.innerWidth) - 0.5;
-            this.mouse.y = (e.clientY / window.innerHeight) - 0.5;
+            this.targetMouse.x = (e.clientX / window.innerWidth) - 0.5;
+            this.targetMouse.y = (e.clientY / window.innerHeight) - 0.5;
         });
 
         window.addEventListener('scroll', () => {
-            this.scrollPos = window.scrollY;
+            this.targetScroll = window.scrollY;
+
+            // Theme Switching based on scroll
+            const height = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = window.scrollY / height;
+            this.currentThemeIdx = progress < 0.3 ? 0 : (progress < 0.7 ? 1 : 2);
         });
     }
 
     animate() {
         requestAnimationFrame(() => this.animate());
 
-        this.objects.forEach(obj => {
-            obj.mesh.rotation.x += obj.rotX;
-            obj.mesh.rotation.y += obj.rotY;
-            obj.mesh.position.y = obj.initialY + (this.scrollPos * 0.02);
+        // Smooth Lerps
+        this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.05;
+        this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.05;
+        this.scrollPos += (this.targetScroll - this.scrollPos) * 0.1;
 
-            // Subtle mouse react
-            obj.mesh.position.x += (this.mouse.x * 2 - obj.mesh.position.x) * 0.005;
+        // Theme Lerping
+        const targetColor = this.themes[this.currentThemeIdx].light;
+        this.mainLight.color.lerp(targetColor, 0.05);
+        this.ambLight.color.lerp(targetColor, 0.02);
+
+        this.objects.forEach((obj, i) => {
+            obj.mesh.rotation.x += obj.rot.x;
+            obj.mesh.rotation.y += obj.rot.y;
+
+            // Cinematic Scroll Fly-through
+            const parallax = this.scrollPos * 0.06;
+            obj.mesh.position.y = obj.initialPos.y + parallax;
+
+            // Floating wavelike motion
+            obj.mesh.position.x = obj.initialPos.x + Math.sin(Date.now() * 0.0005 + i) * 3;
         });
 
-        this.camera.rotation.y += (this.mouse.x * 0.1 - this.camera.rotation.y) * 0.02;
-        this.camera.rotation.x += (-this.mouse.y * 0.1 - this.camera.rotation.x) * 0.02;
+        // Camera cinematic path and rotation
+        this.camera.position.x += (this.mouse.x * 15 - this.camera.position.x) * 0.05;
+        this.camera.position.y += (-this.mouse.y * 15 - this.camera.position.y) * 0.05;
+        this.camera.rotation.z += (Math.sin(this.scrollPos * 0.001) * 0.1 - this.camera.rotation.z) * 0.05;
 
         this.renderer.render(this.scene, this.camera);
     }
@@ -162,6 +188,17 @@ class FloatingHearts {
         this.container = document.getElementById(containerId);
         this.hearts = ['💕', '❤️', '💖', '💗', '💝', '🩷', '✨', '🌸', '🦋', '💐'];
         this.spawn();
+    }
+
+    spawnSingle() {
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart';
+        heart.innerText = this.hearts[Math.floor(Math.random() * this.hearts.length)];
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+        heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        this.container.appendChild(heart);
+        setTimeout(() => heart.remove(), 6000);
     }
 
     createHeart() {
@@ -197,27 +234,16 @@ class MemoryGallery {
         this.container = document.getElementById(containerId);
         if (!this.container) return;
         this.images = [
-            'IMG20260128152800.jpg',
-            'IMG20260130130105.jpg',
-            'IMG20260130130109.jpg',
-            'IMG20260130130111 (1).jpg',
-            'IMG20260130130111.jpg',
-            'IMG20260130130114 (1).jpg',
-            'IMG20260130130114.jpg',
-            'IMG20260130130237 (1).jpg',
-            'IMG20260130130237.jpg',
-            'IMG20260130130243 (1).jpg',
-            'IMG20260130130243.jpg',
+            'IMG20260128152800.jpg', 'IMG20260130130105.jpg', 'IMG20260130130109.jpg',
+            'IMG20260130130111 (1).jpg', 'IMG20260130130111.jpg', 'IMG20260130130114 (1).jpg',
+            'IMG20260130130114.jpg', 'IMG20260130130237 (1).jpg', 'IMG20260130130237.jpg',
+            'IMG20260130130243 (1).jpg', 'IMG20260130130243.jpg',
             'Screenshot_2026-01-30-13-01-58-88_92460851df6f172a4592fca41cc2d2e6 (1).jpg',
             'Screenshot_2026-01-30-13-01-58-88_92460851df6f172a4592fca41cc2d2e6.jpg',
-            'WhatsApp Image 2026-02-24 at 5.13.45 PM (1).jpeg',
-            'WhatsApp Image 2026-02-24 at 5.13.46 PM (1).jpeg',
-            'WhatsApp Image 2026-02-24 at 5.14.38 PM (1).jpeg',
-            'WhatsApp Image 2026-02-28 at 21.18.39.jpeg',
-            'WhatsApp Image 2026-02-28 at 21.18.40.jpeg',
-            'WhatsApp Image 2026-02-28 at 21.18.41a.jpeg',
-            'WhatsApp Image 2026-s02-28 at 21.18.40.jpeg',
-            'WhatsAspp Image 2026-02-28 at 21.18.40.jpeg',
+            'WhatsApp Image 2026-02-24 at 5.13.45 PM (1).jpeg', 'WhatsApp Image 2026-02-24 at 5.13.46 PM (1).jpeg',
+            'WhatsApp Image 2026-02-24 at 5.14.38 PM (1).jpeg', 'WhatsApp Image 2026-02-28 at 21.18.39.jpeg',
+            'WhatsApp Image 2026-02-28 at 21.18.40.jpeg', 'WhatsApp Image 2026-02-28 at 21.18.41a.jpeg',
+            'WhatsApp Image 2026-s02-28 at 21.18.40.jpeg', 'WhatsAspp Image 2026-02-28 at 21.18.40.jpeg',
             's.jpeg'
         ];
         this.captions = [
@@ -225,7 +251,7 @@ class MemoryGallery {
             "Special moments", "Forever yours", "My favorite person", "Making memories",
             "Living the dream", "You and Me", "Love in every frame", "Thinking of you",
             "Sunshine in human form", "My everything", "Heart of gold", "Beautiful soul",
-            "Best days of my life", "Truly magical", "Sweetest laugh", "Always by your side"
+            "Best days of my life", "Truly magical"
         ];
         this.init();
     }
@@ -251,6 +277,8 @@ class MemoryGallery {
                     <p>A beautiful moment captured forever. You look absolutely stunning here, my love.</p>
                 </div>
             `;
+
+            card.addEventListener('mouseenter', () => sfx.play('pop'));
             this.container.appendChild(card);
         });
     }
@@ -262,13 +290,9 @@ class VideoGallery {
         this.container = document.getElementById(containerId);
         if (!this.container) return;
         this.videos = [
-            'VID-20260128-WA0021.mp4',
-            'VID-20260130-WA0005.mp4',
-            'VID20260121174743.mp4',
-            'VID20260121174934.mp4',
-            'VID_20260130_001652_002.mp4',
-            'WhatsApp Video 2026-02-28 at 21.17.29.mp4',
-            'WhatsApp Video 2026-02-28 at 21.17.31.mp4'
+            'VID-20260128-WA0021.mp4', 'VID-20260130-WA0005.mp4', 'VID20260121174743.mp4',
+            'VID20260121174934.mp4', 'VID_20260130_001652_002.mp4',
+            'WhatsApp Video 2026-02-28 at 21.17.29.mp4', 'WhatsApp Video 2026-02-28 at 21.17.31.mp4'
         ];
         this.init();
     }
@@ -292,6 +316,7 @@ class VideoGallery {
                     <p>A special moment caught on camera.</p>
                 </div>
             `;
+            card.addEventListener('mouseenter', () => sfx.play('pop'));
             this.container.appendChild(card);
         });
     }
@@ -335,6 +360,31 @@ class InteractionManager {
         this.initSpotlight();
         this.initMagnetic();
         this.initLetterReveal();
+        this.initReasonTilt();
+        this.initGalleryTilt();
+    }
+
+    initReasonTilt() {
+        const cards = document.querySelectorAll('.reason-card, .memory-card, .video-card, .quote-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 15;
+                const rotateY = (centerX - x) / 15;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+    }
+
+    initGalleryTilt() {
+        // Shared with initReasonTilt for efficiency
     }
 
     initSpotlight() {
@@ -469,6 +519,8 @@ class BirthdayCore {
         if (enterBtn && overlay) {
             enterBtn.addEventListener('click', () => {
                 overlay.classList.add('fade-out');
+                sfx.play('wish');
+                for (let i = 0; i < 50; i++) setTimeout(() => new FloatingHearts('floating-hearts').spawnSingle(), i * 10);
                 if (!this.playing) toggle();
             });
         }
@@ -504,8 +556,13 @@ class Typewriter {
 // ===== 7. CURSOR TRAIL =====
 class CursorTrail {
     constructor() {
+        this.density = 0.8;
         window.addEventListener('mousemove', e => {
-            if (Math.random() > 0.8) this.create(e.clientX, e.clientY);
+            if (e.target.closest('.memory-card, .video-card, .quote-card, .reason-card')) {
+                if (Math.random() > 0.4) this.create(e.clientX, e.clientY);
+            } else {
+                if (Math.random() > this.density) this.create(e.clientX, e.clientY);
+            }
         });
     }
     create(x, y) {
