@@ -466,19 +466,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Card Effects
     initTiltCards();
 
-    // Audio Toggle (placeholder — add your own audio file)
+    // Audio Player — Oh Lala Re 🎶
     const audioBtn = document.getElementById('audio-toggle');
     let audioPlaying = false;
-    let audio = null;
+    const audio = new Audio('song.webm');
+    audio.loop = true;
+    audio.volume = 0.5;
 
-    audioBtn.addEventListener('click', () => {
-        if (!audio) {
-            audio = new Audio();
-            // To add music, place a .mp3 file in the same folder and update the src:
-            // audio.src = 'your-song.mp3';
-            audio.loop = true;
-        }
-
+    function toggleAudio() {
         if (audioPlaying) {
             audio.pause();
             audioBtn.classList.remove('playing');
@@ -489,7 +484,22 @@ document.addEventListener('DOMContentLoaded', () => {
             audioBtn.querySelector('.audio-icon').textContent = '🔊';
         }
         audioPlaying = !audioPlaying;
-    });
+    }
+
+    audioBtn.addEventListener('click', toggleAudio);
+
+    // Auto-play music on first user interaction
+    function autoPlayOnce() {
+        if (!audioPlaying) {
+            toggleAudio();
+        }
+        document.removeEventListener('click', autoPlayOnce);
+        document.removeEventListener('scroll', autoPlayOnce);
+        document.removeEventListener('touchstart', autoPlayOnce);
+    }
+    document.addEventListener('click', autoPlayOnce);
+    document.addEventListener('scroll', autoPlayOnce);
+    document.addEventListener('touchstart', autoPlayOnce);
 
     // Initial hero animation
     setTimeout(() => {
