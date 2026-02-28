@@ -450,20 +450,33 @@ class BirthdayCore {
 
     initAudio() {
         const btn = document.getElementById('audio-toggle');
-        const audio = new Audio('song.webm');
-        audio.loop = true;
-        let playing = false;
+        this.audio = new Audio('song.webm');
+        this.audio.loop = true;
+        this.playing = false;
 
         const toggle = () => {
-            playing ? audio.pause() : audio.play().catch(e => console.log('Wait for user interaction'));
-            playing = !playing;
-            btn.classList.toggle('playing', playing);
-            btn.querySelector('.audio-icon').innerText = playing ? '🔊' : '🎵';
+            if (this.playing) {
+                this.audio.pause();
+            } else {
+                this.audio.play().catch(e => console.log('Wait for user interaction'));
+            }
+            this.playing = !this.playing;
+            btn.classList.toggle('playing', this.playing);
+            btn.querySelector('.audio-icon').innerText = this.playing ? '🔊' : '🎵';
         };
 
         btn.addEventListener('click', toggle);
-        const playOnce = () => { toggle(); document.removeEventListener('click', playOnce); };
-        document.addEventListener('click', playOnce);
+
+        // Handle Welcome Overlay
+        const overlay = document.getElementById('welcome-overlay');
+        const enterBtn = document.getElementById('enter-btn');
+
+        if (enterBtn && overlay) {
+            enterBtn.addEventListener('click', () => {
+                overlay.classList.add('fade-out');
+                if (!this.playing) toggle();
+            });
+        }
     }
 }
 
