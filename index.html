@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday My Love 💕</title>
+    <meta name="description" content="A special birthday surprise for the most amazing person in my life.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Particle Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Floating Hearts Container -->
+    <div id="floating-hearts"></div>
+
+    <!-- Audio Toggle -->
+    <button id="audio-toggle" class="audio-btn" aria-label="Toggle Music">
+        <span class="audio-icon">🎵</span>
+    </button>
+
+    <!-- ===== SECTION 1: HERO / INTRO ===== -->
+    <section id="hero" class="section hero-section">
+        <div class="hero-content">
+            <div class="sparkle-container">
+                <span class="sparkle">✦</span>
+                <span class="sparkle">✧</span>
+                <span class="sparkle">✦</span>
+            </div>
+            <p class="hero-subtitle reveal-text">To the most beautiful soul I know</p>
+            <h1 class="hero-title">
+                <span class="title-line reveal-text" data-delay="200">Happy</span>
+                <span class="title-line reveal-text" data-delay="400">Birthday</span>
+                <span class="title-line title-name reveal-text" data-delay="600">My Love</span>
+            </h1>
+            <div class="hero-date reveal-text" data-delay="800">
+                <span class="date-icon">🎂</span>
+                <span>March 1, 2026</span>
+            </div>
+            <div class="scroll-indicator reveal-text" data-delay="1000">
+                <span>Scroll down for your surprise</span>
+                <div class="scroll-arrow">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-gradient-orb orb-1"></div>
+        <div class="hero-gradient-orb orb-2"></div>
+        <div class="hero-gradient-orb orb-3"></div>
+    </section>
+
+    <!-- ===== SECTION 2: COUNTDOWN ===== -->
+    <section id="countdown-section" class="section countdown-section">
+        <div class="section-inner">
+            <h2 class="section-heading reveal-text">
+                <span class="heading-icon">⏳</span>
+                Counting Every Moment
+            </h2>
+            <div class="countdown-container reveal-text" data-delay="200">
+                <div class="countdown-card">
+                    <span class="countdown-value" id="cd-days">00</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-card">
+                    <span class="countdown-value" id="cd-hours">00</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-card">
+                    <span class="countdown-value" id="cd-minutes">00</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-card">
+                    <span class="countdown-value" id="cd-seconds">00</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+            <p class="countdown-msg reveal-text" data-delay="400" id="countdown-msg">Until your special day begins!</p>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 3: MEMORIES TIMELINE ===== -->
+    <section id="memories-section" class="section memories-section">
+        <div class="section-inner">
+            <h2 class="section-heading reveal-text">
+                <span class="heading-icon">📸</span>
+                Our Beautiful Memories
+            </h2>
+            <p class="section-sub reveal-text" data-delay="200">Every moment with you is a treasure I hold close to my heart</p>
+
+            <div class="memories-timeline">
+                <!-- Memory 1 -->
+                <div class="memory-card reveal-card" data-delay="100">
+                    <div class="memory-image-wrapper">
+                        <div class="memory-placeholder" data-emoji="💑">
+                            <span>Our First Date</span>
+                        </div>
+                    </div>
+                    <div class="memory-content">
+                        <span class="memory-date">❤️ The Beginning</span>
+                        <h3>When It All Started</h3>
+                        <p>The day I met you, I knew my life was about to change forever. Your smile lit up the entire room.</p>
+                    </div>
+                </div>
+
+                <!-- Memory 2 -->
+                <div class="memory-card reveal-card" data-delay="200">
+                    <div class="memory-image-wrapper">
+                        <div class="memory-placeholder" data-emoji="🌅">
+                            <span>Adventures Together</span>
+                        </div>
+                    </div>
+                    <div class="memory-content">
+                        <span class="memory-date">🌟 Adventures</span>
+                        <h3>Exploring The World Together</h3>
+                        <p>Every adventure is better with you by my side. From silly trips to spontaneous plans — you make everything magical.</p>
+                    </div>
+                </div>
+
+                <!-- Memory 3 -->
+                <div class="memory-card reveal-card" data-delay="300">
+                    <div class="memory-image-wrapper">
+                        <div class="memory-placeholder" data-emoji="😂">
+                            <span>Laughing Together</span>
+                        </div>
+                    </div>
+                    <div class="memory-content">
+                        <span class="memory-date">💫 Fun Times</span>
+                        <h3>Our Silly Moments</h3>
+                        <p>Your laugh is my favorite sound in the whole world. Every silly moment we share becomes my happiest memory.</p>
+                    </div>
+                </div>
+
+                <!-- Memory 4 -->
+                <div class="memory-card reveal-card" data-delay="400">
+                    <div class="memory-image-wrapper">
+                        <div class="memory-placeholder" data-emoji="🥰">
+                            <span>Together Forever</span>
+                        </div>
+                    </div>
+                    <div class="memory-content">
+                        <span class="memory-date">♾️ Forever</span>
+                        <h3>Building Our Story</h3>
+                        <p>Every day with you adds another beautiful page to our love story. I can't wait to write a million more.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 4: LOVE LETTER ===== -->
+    <section id="letter-section" class="section letter-section">
+        <div class="section-inner">
+            <h2 class="section-heading reveal-text">
+                <span class="heading-icon">💌</span>
+                A Letter For You
+            </h2>
+            <div class="letter-container reveal-text" data-delay="200">
+                <div class="letter-paper">
+                    <div class="letter-seal">💕</div>
+                    <p class="letter-greeting">My Dearest Love,</p>
+                    <div class="letter-body" id="typewriter-text">
+                        <p>On this beautiful day, I want you to know just how much you mean to me. You are the sunshine that brightens my darkest days, the melody that makes my heart sing, and the reason I believe in magic.</p>
+                        <p>Every moment spent with you feels like a beautiful dream I never want to wake up from. Your smile has the power to turn my worst days into the best ones, and your love gives me the strength to be a better person every single day.</p>
+                        <p>Thank you for being you — for your kindness, your warmth, your incredible spirit, and for choosing to share your life with me. You are the most amazing person I've ever known, and I fall more in love with you with each passing day.</p>
+                        <p>Happy Birthday, my love. May this year bring you all the happiness, success, and love that you truly deserve. I promise to be by your side through every moment, making memories that we'll cherish forever.</p>
+                    </div>
+                    <p class="letter-closing">With all my love, forever and always ❤️</p>
+                    <p class="letter-signature">— Your Person</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 5: REASONS I LOVE YOU ===== -->
+    <section id="reasons-section" class="section reasons-section">
+        <div class="section-inner">
+            <h2 class="section-heading reveal-text">
+                <span class="heading-icon">💖</span>
+                Reasons I Love You
+            </h2>
+            <div class="reasons-grid">
+                <div class="reason-card reveal-card" data-delay="100">
+                    <span class="reason-number">01</span>
+                    <span class="reason-emoji">😊</span>
+                    <p>Your smile that lights up my entire world</p>
+                </div>
+                <div class="reason-card reveal-card" data-delay="200">
+                    <span class="reason-number">02</span>
+                    <span class="reason-emoji">🤗</span>
+                    <p>The way you make me feel safe and loved</p>
+                </div>
+                <div class="reason-card reveal-card" data-delay="300">
+                    <span class="reason-number">03</span>
+                    <span class="reason-emoji">😂</span>
+                    <p>Your infectious laugh that I can't get enough of</p>
+                </div>
+                <div class="reason-card reveal-card" data-delay="400">
+                    <span class="reason-number">04</span>
+                    <span class="reason-emoji">💪</span>
+                    <p>Your incredible strength and determination</p>
+                </div>
+                <div class="reason-card reveal-card" data-delay="500">
+                    <span class="reason-number">05</span>
+                    <span class="reason-emoji">💝</span>
+                    <p>Your kind heart that cares for everyone</p>
+                </div>
+                <div class="reason-card reveal-card" data-delay="600">
+                    <span class="reason-number">06</span>
+                    <span class="reason-emoji">🌟</span>
+                    <p>The way you inspire me to be my best self</p>
+                </div>
+                <div class="reason-card reveal-card" data-delay="700">
+                    <span class="reason-number">07</span>
+                    <span class="reason-emoji">🎭</span>
+                    <p>Your amazing sense of humor and wit</p>
+                </div>
+                <div class="reason-card reveal-card" data-delay="800">
+                    <span class="reason-number">08</span>
+                    <span class="reason-emoji">♾️</span>
+                    <p>Everything — because you are simply perfect to me</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 6: BIRTHDAY WISH / CAKE ===== -->
+    <section id="wish-section" class="section wish-section">
+        <div class="section-inner">
+            <h2 class="section-heading reveal-text">
+                <span class="heading-icon">🎂</span>
+                Make A Wish!
+            </h2>
+            <div class="cake-container reveal-text" data-delay="200">
+                <div class="cake" id="birthday-cake">
+                    <div class="cake-candles">
+                        <div class="candle"><div class="flame" id="flame-1"></div></div>
+                        <div class="candle"><div class="flame" id="flame-2"></div></div>
+                        <div class="candle"><div class="flame" id="flame-3"></div></div>
+                    </div>
+                    <div class="cake-top"></div>
+                    <div class="cake-middle"></div>
+                    <div class="cake-bottom"></div>
+                    <div class="cake-plate"></div>
+                </div>
+                <p class="cake-instruction">✨ Click on the cake to blow out the candles! ✨</p>
+            </div>
+            <div class="confetti-container" id="confetti-container"></div>
+            <div class="final-wish reveal-text" data-delay="400" id="final-wish" style="display: none;">
+                <h3>🎉 Happy Birthday! 🎉</h3>
+                <p>May all your wishes come true, my love!</p>
+                <p>Here's to another amazing year together! 💕</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">Made with 💖 just for you</p>
+            <p class="footer-year">Happy Birthday 2026</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
