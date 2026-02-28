@@ -810,6 +810,79 @@ body.ready #mouse-spotlight {
     }
 }
 
+/* ===========================
+   SECTION 4: STORY QUOTES
+   =========================== */
+.story-quotes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    margin-top: 40px;
+}
+
+.quote-card {
+    background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    padding: 50px 32px 40px;
+    position: relative;
+    transition: var(--transition-bounce);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.quote-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--gradient-love);
+    opacity: 0.6;
+}
+
+.quote-card:hover {
+    transform: translateY(-10px) rotate(1deg) scale(1.02);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-glow);
+}
+
+.quote-mark {
+    font-family: var(--font-display);
+    font-size: 6rem;
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    opacity: 0.1;
+    background: var(--gradient-love);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: none;
+}
+
+.quote-card p {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--text-primary);
+    line-height: 1.6;
+    position: relative;
+    z-index: 2;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .story-quotes-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .memory-card {
     background: var(--bg-glass);
     -webkit-backdrop-filter: blur(20px);
